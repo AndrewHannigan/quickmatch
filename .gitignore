@@ -1,3 +1,4 @@
 # ignore compiled source #
 *.out
 *.dSYM*
+*.swp
