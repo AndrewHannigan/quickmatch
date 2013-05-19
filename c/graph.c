@@ -10,8 +10,7 @@
 // A utility function to create a new adjacency list node
 struct Node* createNode(int label)
 {
-    struct Node* node =
-            (struct Node*) malloc(sizeof(struct Node));
+    struct Node* node = (struct Node*) malloc(sizeof(struct Node));
     node->label = label;
     node->next = NULL;
     node->prev = NULL;
@@ -194,6 +193,7 @@ void computeNeighborhoods(struct Graph *graph)
             cur = cur->next;
         }
     } 
+    free(label_table);
 }
 
 
@@ -314,6 +314,27 @@ void freeNodeList(struct NodeList *nodeList)
         crawler = temp;
     }
 }
+
+
+
+void freeNS(struct NeighborhoodStacks *ns, struct Graph *graph) 
+{
+    int d = graph->d;
+    int i;
+    struct Node *crawler, *temp;
+    for (i=0; i<d+1; ++i) {
+        crawler = ns->array[i].head;
+        while (crawler != NULL) {
+            temp = crawler->next;
+            free(crawler);
+            crawler = temp;
+        }
+    }
+    free(ns->array);
+    free(ns);
+}
+
+
 
 void freeGraph(struct Graph *graph)
 {

@@ -1,7 +1,10 @@
 #ifndef TESTING_H
 #define TESTING_H
 
+
 int dTest(int N, int d_upper, int d_interval, char *file_name);
+
+int NTest(int d, int N_lower, int N_upper, int N_interval, char *file_name);
 
 int bigTest(int N, int d, char *file_name);
 

@@ -46,10 +46,9 @@ int laurensPartial(struct Graph *graph, int **outMatching, int *outUnmatched, in
     *outUnmatched = countUnmatched(matching, graph->V / 2);
 
     // free dat memory doh
-    free(ns->array);
-    free(ns);
     free(matched);
     free(crawler_table);
+    freeNS(ns, graph);
 
     completeMatching(outMatching, graph->V/2);
 

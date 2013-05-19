@@ -71,6 +71,54 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
     }
 }
 
+
+int NTest(int d, int N_lower, int N_upper, int N_interval, char *file_name) {
+/*
+
+unmatched, d, N, p (ratio of N / (N-unmatched))
+
+*/
+    long last_flush = 0;
+    long cur_time = 0;
+    FILE *file; 
+    file = fopen(file_name,"a+"); // append file (add text to a file or 
+                                  // create a file if it does not exist.
+    assert(file != NULL);
+
+    srandom(SEED);
+    int N;
+    while (true) {
+        for (N=N_lower; N<=N_upper; N=N*N_interval) {
+            int *right_sides;
+            int *matching;
+            int unmatched = 0;
+            int laurens_steps;
+            struct Graph *graph;
+
+            right_sides = createRightSides(N,d);
+            graph = createRandomRegBipartite(N,d,0,right_sides);
+            laurens_steps = laurens(graph,&matching,&unmatched);
+
+            // Validate
+            validateMatching(matching, graph);
+            
+            fprintf(file,"%i,%i,%i,%f\n", unmatched, d, N, ((float) N) / (N-unmatched));
+
+            cur_time = (long) time(NULL);
+            if (time(NULL) >= last_flush + FLUSH_TIME) {
+                fflush(file);
+                last_flush = cur_time;
+            }
+
+            // Free
+            freeGraph(graph);
+            free(matching);
+            free(right_sides);
+        }
+    }
+}
+
+
 int bigTest(int N, int d, char *file_name) {
 /*
 
@@ -262,9 +310,10 @@ int hopcroftTest(int N, int d, char *file_name) {
     fclose(file); 
 }
 
+
 void basicLaurens(int N, int d, int runForever) {
     srandom(time(NULL));
-    int *right_sides, *matching, *matchingRand, unmatchedWithRandom, unmatchedNormal;
+    int *right_sides, *matching, *matchingRand, unmatchedNormal;
     struct Graph *graph;
     if (runForever) {
         while(true) {
@@ -291,6 +340,8 @@ void basicLaurens(int N, int d, int runForever) {
         printf("%f seconds\n", seconds);
         printf("%i steps\n\n",steps);
         free(matching);
+        freeGraph(graph);
+        free(right_sides);
     }
 }
 
