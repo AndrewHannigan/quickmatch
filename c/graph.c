@@ -6,7 +6,6 @@
 #include <assert.h>
 #include "graph.h" 
 
-
 // A utility function to create a new adjacency list node
 struct Node* createNode(int label)
 {
@@ -64,7 +63,7 @@ int *createRightSides(int N, int d)
 
 struct Graph* createRandomRegBipartite(int N, int d, int removeMultiEdges, int *right_sides)
 {
-    assert(removeMultiEdges == 0);
+    //assert(removeMultiEdges == 0);
     struct Graph* graph = initGraph(N*2, d);
 
     // update adjacency list

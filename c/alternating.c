@@ -430,7 +430,7 @@ int dfsWave(struct Graph *graph, enum SIDE startingSide, struct QsNode **targets
     else {assert(false);} // error
 
 
-   if (side == HOME) { 
+    if (side == HOME) { 
        // traverse to all unvisited nodes, use edges not in matching
        crawler = graph->array[cur->label].head;
        while (crawler != NULL) {
@@ -560,7 +560,7 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
     int waveResult;
     if (level % 2 == 0) {
         side = HOME;
-        waveResult = 2; // make this less weird, 2 is magic number TODO
+        waveResult = 2; 
     } 
     else {
         side = AWAY;
@@ -568,14 +568,11 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
     }
 
     while (oldQueue->head != NULL) {
-
         cur = dequeue(oldQueue);
-        *steps = *steps + 1;
 
         if (side == HOME) { 
             // traverse to all unvisited nodes, use edges not in matching
             crawler = originalGraph->array[cur->label].head;
-            (*steps)++;
             while (crawler != NULL) {
                 if (visited[crawler->label] == 0) {
                     if (waveResult==2) waveResult = 0; // 2 indicates that there definitely are NO alternating paths left.  0 indicates we just haven't found one yet.
@@ -586,7 +583,6 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
                         waveResult = 1;
                     } 
                     enqueue(createQsNode(crawler->label), newQueue);
-                    (*steps)++;
                 }
                 crawler = crawler->next;
                 (*steps)++;
@@ -595,7 +591,7 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
             assert(matching[cur->label] != -1); // if it does, we should have stopped in previous iteration, unmatched vertex on AWAY was found
             insertToHungarian(hungarianGraph, cur->label, matching[cur->label]);
             enqueue(createQsNode(matching[cur->label]), newQueue);
-            (*steps) = *steps + 2;
+            (*steps) = *steps + 1;
         }
         free(cur);
     }
@@ -603,7 +599,7 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
     // mark nodes visited this wave at the end (allows algo to revisit nodes within this wave)
     cur = newQueue->head;
     while (cur != NULL) {
-        (*steps)++;
+//        (*steps)++
         if (visited[cur->label] == 0) {
             visited[cur->label] = 1; 
             cur = cur->next;
@@ -713,7 +709,7 @@ void visitNewNodeHopcroftDFS(struct Node *discoveredNode, struct QsNode *cur, st
     newNode->source = discoveredNode;
     push(newNode,stack);
     visited[discoveredNode->label] = newNode;
-    *steps += 5;
+    *steps += 1;
 }
 
 
@@ -736,7 +732,7 @@ int hopcroftDFS(struct Graph *hungarianGraph, int *matching, int *steps)
 
         // Explore nodes
         discovered = hungarianGraph->array[cur->label].head;
-        (*steps) += 3;
+        (*steps) += 1;
 
         while (discovered != NULL) { 
             if (visited[discovered->label] == NULL) {
@@ -745,7 +741,6 @@ int hopcroftDFS(struct Graph *hungarianGraph, int *matching, int *steps)
                     traceBackAlternatingPath(matching, visited[discovered->label]);
                     deleteNodeFromNodelist(discovered, cur->label, hungarianGraph);
                     targetFound = true;
-                    *steps += 1 + hungarianGraph->V;
                     break;
                 }
             }
@@ -772,7 +767,7 @@ struct Graph *createHungarianGraph(struct Graph *originalGraph, int *matching, i
     struct Graph *hungarianGraph = initGraph(2*N, originalGraph->d);
     int level = 0;
 
-    *steps += 3*originalGraph->V;
+    //*steps += 3*originalGraph->V;   NOT COUNTING MALLOCS AGAINST HOPCROFT
     
     // BUILD HUNGARIAN GRAPH
     while (waveResult == 0) {
@@ -846,7 +841,7 @@ int hopcroft(struct Graph *graph, int **matching) {
 
 
 int hopcroftPartial(struct Graph *graph, int *matching) {
-    int steps=0,i, unmatched=0;
+    int steps=0,i,unmatched=0;
     for (i=0; i<graph->V/2; i++) {
         if (matching[i] == -1) {
             unmatched++;

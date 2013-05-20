@@ -356,7 +356,7 @@ void basicHopcroft(int N, int d, int runForever) {
     if (runForever) {
         while (true) {
             right_sides = createRightSides(N,d);
-            originalGraph = createRandomRegBipartite(N,d,true,right_sides);
+            originalGraph = createRandomRegBipartite(N,d,false,right_sides);
             int steps = hopcroft(originalGraph, &matching);
             printf("unmatched: %i\n", validateMatching(matching, originalGraph));
             printf("steps: %i\n", steps);
@@ -367,7 +367,7 @@ void basicHopcroft(int N, int d, int runForever) {
     }
     else {
         right_sides = createRightSides(N,d);
-        originalGraph = createRandomRegBipartite(N,d,true,right_sides);
+        originalGraph = createRandomRegBipartite(N,d,false,right_sides);
         START_TIMER
         int steps = hopcroft(originalGraph, &matching);
         STOP_TIMER
@@ -379,6 +379,7 @@ void basicHopcroft(int N, int d, int runForever) {
         free(matching);
     }
 }
+
 
 
 int basicLaurensPersist(int N, int d, char *file_name, FILE *graphFile)
