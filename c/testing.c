@@ -121,6 +121,152 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
 }
 
 
+int altTest(int N, int d, char *file_name) {
+/*
+
+N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_steps, hopcroft_steps, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time
+
+*/
+    long last_flush = 0;
+    long cur_time = 0;
+    FILE *file; 
+    file = fopen(file_name,"a+"); // append file (add text to a file or 
+                                  // create a file if it does not exist.
+    assert(file != NULL);
+
+    //srandom(time(NULL));
+    srandom(SEED);
+    int laurens_steps;
+    int bfs_steps;
+    int dfs_steps;
+    int bfs2bfs_steps;
+    int dfs2bfs_steps;
+    int dfs2dfs_steps;
+    int hopcroft_steps;
+    float laurens_time;
+    float bfs_time;
+    float dfs_time;
+    float bfs2bfs_time;
+    float dfs2bfs_time;
+    float dfs2dfs_time;
+    float hopcroft_time;
+    int i;
+    while (true) {
+        int *right_sides;
+        int *matching;
+        int unmatched = 0;
+        struct Graph *graph;
+
+        right_sides = createRightSides(N,d);
+        graph = createRandomRegBipartite(N,d,0,right_sides);
+          START_TIMER
+          laurens_steps = laurens(graph,&matching,&unmatched);
+          STOP_TIMER
+        laurens_time = seconds;
+    
+
+        // Copy a matching for each process
+        int* matching1 = copyMatching(matching, N);
+        int* matching2 = copyMatching(matching, N);
+        int* matching3 = copyMatching(matching, N);
+        int* matching4 = copyMatching(matching, N);
+        int* matching5 = copyMatching(matching, N);
+        int* matching6 = copyMatching(matching, N);
+
+
+        // Perform
+        resetGraph(graph);
+      
+        bfs_steps=0;
+        dfs_steps=0;
+        bfs2bfs_steps=0;
+        dfs2bfs_steps=0;
+        dfs2dfs_steps=0;
+        hopcroft_steps=0;
+        bfs_time=0;
+        dfs_time=0;
+        bfs2bfs_time=0;
+        dfs2bfs_time=0;
+        dfs2dfs_time=0;
+        hopcroft_steps=0;
+
+        for (unmatched=unmatched; unmatched>0; unmatched--) {
+            START_TIMER             
+            bfs_steps = bfs(graph,matching1);
+            STOP_TIMER
+            bfs_time = seconds;
+
+            START_TIMER
+            dfs_steps = dfs(graph,matching5);
+            STOP_TIMER
+            dfs_time = seconds;
+
+            START_TIMER
+            bfs2bfs_steps = bfs2bfs(graph,matching2);
+            STOP_TIMER
+            bfs2bfs_time = seconds;
+
+            START_TIMER
+            dfs2bfs_steps = dfs2bfs(graph,matching3);
+            STOP_TIMER
+            dfs2bfs_time = seconds;
+
+            START_TIMER
+            dfs2dfs_steps = dfs2dfs(graph,matching4);
+            STOP_TIMER
+            dfs2dfs_time = seconds;
+
+            START_TIMER
+            hopcroft_steps = hopcroftPartial(graph,matching6);
+            STOP_TIMER
+            hopcroft_time = seconds;
+
+            fprintf(file,"%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f\n", N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_steps, hopcroft_steps, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time);
+
+        }
+
+        // Validate
+        validateMatching(matching1, graph);
+        validateMatching(matching2, graph);
+        validateMatching(matching3, graph);
+        validateMatching(matching4, graph);
+        validateMatching(matching5, graph);
+        validateMatching(matching6, graph);
+
+        assert(isMatchingComplete(graph, matching1));
+        assert(isMatchingComplete(graph, matching2));
+        assert(isMatchingComplete(graph, matching3));
+        assert(isMatchingComplete(graph, matching4));
+        assert(isMatchingComplete(graph, matching5));
+        assert(isMatchingComplete(graph, matching6));
+    
+        float unmatchedFloat = (float) unmatched;
+        
+    
+        cur_time = (long) time(NULL);
+        if (time(NULL) >= last_flush + FLUSH_TIME) {
+            fflush(file);
+            last_flush = cur_time;
+        }
+
+        // Free
+        freeGraph(graph);
+        free(matching);
+        free(matching1);
+        free(matching2);
+        free(matching3);
+        free(matching4);
+        free(matching5);
+        free(matching6);
+        free(right_sides);
+        //free(visited);
+        //free(targets);
+    }
+    fclose(file); 
+}
+
+
+
 int bigTest(int N, int d, char *file_name) {
 /*
 
@@ -142,12 +288,14 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
     int bfs2bfs_steps;
     int dfs2bfs_steps;
     int dfs2dfs_steps;
+    int hopcroft_steps;
     float laurens_time;
     float bfs_time;
     float dfs_time;
     float bfs2bfs_time;
     float dfs2bfs_time;
     float dfs2dfs_time;
+    float hopcroft_time;
     int i;
     while (true) {
         int *right_sides;
@@ -157,9 +305,9 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
 
         right_sides = createRightSides(N,d);
         graph = createRandomRegBipartite(N,d,0,right_sides);
-        START_TIMER
-        laurens_steps = laurens(graph,&matching,&unmatched);
-        STOP_TIMER
+          START_TIMER
+          laurens_steps = laurens(graph,&matching,&unmatched);
+          STOP_TIMER
         laurens_time = seconds;
     
 
@@ -169,8 +317,10 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
         int* matching3 = copyMatching(matching, N);
         int* matching4 = copyMatching(matching, N);
         int* matching5 = copyMatching(matching, N);
+        int* matching6 = copyMatching(matching, N);
 
-        // Perfrom
+
+        // Perform
         resetGraph(graph);
       
         bfs_steps=0;
@@ -178,11 +328,13 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
         bfs2bfs_steps=0;
         dfs2bfs_steps=0;
         dfs2dfs_steps=0;
+        hopcroft_steps=0;
         bfs_time=0;
         dfs_time=0;
         bfs2bfs_time=0;
         dfs2bfs_time=0;
         dfs2dfs_time=0;
+        hopcroft_steps=0;
 
         for (i=0; i<unmatched; i++) {
             START_TIMER             
@@ -210,9 +362,11 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
             STOP_TIMER
             dfs2dfs_time += seconds;
 
+            START_TIMER
+            hopcroft_steps += hopcroftPartial(graph,matching6);
+            STOP_TIMER
+            hopcroft_time += seconds;
         }
-
-
 
         // Validate
         validateMatching(matching1, graph);
@@ -220,18 +374,18 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
         validateMatching(matching3, graph);
         validateMatching(matching4, graph);
         validateMatching(matching5, graph);
+        validateMatching(matching6, graph);
 
         assert(isMatchingComplete(graph, matching1));
         assert(isMatchingComplete(graph, matching2));
         assert(isMatchingComplete(graph, matching3));
         assert(isMatchingComplete(graph, matching4));
         assert(isMatchingComplete(graph, matching5));
+        assert(isMatchingComplete(graph, matching6));
     
         float unmatchedFloat = (float) unmatched;
         
-        fprintf(file,"%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/unmatchedFloat, \
-                                                           dfs2bfs_steps/unmatchedFloat, dfs2dfs_steps/unmatchedFloat, dfs_steps/unmatchedFloat, bfs_time, \
-                                                           bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time);
+        fprintf(file,"%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/unmatchedFloat, dfs2bfs_steps/unmatchedFloat, dfs2dfs_steps/unmatchedFloat, dfs_steps/unmatchedFloat, hopcroft_steps/unmatchedFloat, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time);
     
         cur_time = (long) time(NULL);
         if (time(NULL) >= last_flush + FLUSH_TIME) {
@@ -247,6 +401,7 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
         free(matching3);
         free(matching4);
         free(matching5);
+        free(matching6);
         free(right_sides);
         //free(visited);
         //free(targets);

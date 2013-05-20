@@ -21,7 +21,7 @@ int main ( int argc, char *argv[] )
     char* N = (char*)malloc(max); 
     char* d = (char*)malloc(max); 
 
-    printf("\n1 ---> bigTest() - runs laurens and tests all hermit fixup methods (bfs, bfs2bfs, etc.)\n");
+    printf("\n1 ---> altTest() - runs laurens and tests all alternating-path-based fixup methods (bfs, bfs2bfs, etc.)\n");
     printf("2 ---> basicLaurens()        - runs laurens and prints num unmatched\n");
     printf("3 ---> basicLaurensPersist() - runs laurens and saves results to disk.  Records unmatched everytime, and right_sides only if we reach a new maxUnmatched.\n");
     printf("4 ---> basicHopcroft()        - runs hopcroft and prints num unmatched\n");
@@ -32,11 +32,11 @@ int main ( int argc, char *argv[] )
     int selection = atoi(userInput);
     
     if (selection==1) {
-        printf("\nbigHermitFixingTest() selected\n");
+        printf("\naltTest() selected\n");
         getInput("Filename: ", userInput, max);
         getInput("N: ", N, max);
         getInput("d: ", d, max);
-        bigTest(atoi(N),atoi(d),userInput);
+        altTest(atoi(N),atoi(d),userInput);
     }    
 
     else if (selection==2) {

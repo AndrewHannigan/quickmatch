@@ -574,18 +574,17 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
             // traverse to all unvisited nodes, use edges not in matching
             crawler = originalGraph->array[cur->label].head;
             while (crawler != NULL) {
+                (*steps)++;
                 if (visited[crawler->label] == 0) {
                     if (waveResult==2) waveResult = 0; // 2 indicates that there definitely are NO alternating paths left.  0 indicates we just haven't found one yet.
                     // insert into hungarianGraph
                     insertToHungarian(hungarianGraph, cur->label, crawler->label);
-                    (*steps)++;
                     if (targets[crawler->label] == 1) {
                         waveResult = 1;
                     } 
                     enqueue(createQsNode(crawler->label), newQueue);
                 }
                 crawler = crawler->next;
-                (*steps)++;
             }
         } else { // side == AWAY 
             assert(matching[cur->label] != -1); // if it does, we should have stopped in previous iteration, unmatched vertex on AWAY was found
@@ -709,7 +708,6 @@ void visitNewNodeHopcroftDFS(struct Node *discoveredNode, struct QsNode *cur, st
     newNode->source = discoveredNode;
     push(newNode,stack);
     visited[discoveredNode->label] = newNode;
-    *steps += 1;
 }
 
 
@@ -717,7 +715,7 @@ int hopcroftDFS(struct Graph *hungarianGraph, int *matching, int *steps)
 {
     struct Stack *stack = createStack();
     struct QsNode **visited = initVisitedHopcroftDFS(hungarianGraph, matching, stack);
-    (*steps) += hungarianGraph->V;
+    //(*steps) += hungarianGraph->V;
 
     int targetFound = false;
     struct QsNode *cur;
@@ -792,7 +790,7 @@ struct Graph *createHungarianGraph(struct Graph *originalGraph, int *matching, i
     freeQueue(newQueue);
     freeQueue(oldQueue);
 
-    *steps += 2*hungarianGraph->V;
+    //*steps += 2*hungarianGraph->V;
 
     assert(hungarianGraph != NULL);
     return hungarianGraph;
@@ -833,7 +831,7 @@ int hopcroft(struct Graph *graph, int **matching) {
         (*matching)[i] = -1;
     }
 
-    steps += graph->V;
+    //steps += graph->V;
     steps += hopcroftPartial(graph, *matching);
     return steps;
 }
