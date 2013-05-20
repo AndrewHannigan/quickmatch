@@ -17,10 +17,10 @@ ax3.set_title("N = 10000")
 ax4 = fig1.add_subplot(2,2,4)
 ax4.set_title("N = 100000")
 
-N100_file = "dtest_N100d99interval2.csv"
-N1000_file = "dtest_N1000d49interval8.csv"
-N10000_file = "dtest_N10000d29interval6.csv"
-N50000_file = "dtest_N100000d19interval4.csv"
+N100_file = "dtest_N100d20interval2.csv"
+N1000_file = "dtest_N1000d40interval4.csv"
+N10000_file = "dtest_N10000d44interval4.csv"
+N50000_file = "dtest_N50000d19interval2.csv"
 
 
 x,y = avg_plot_data(CSV_DIR + N100_file, 1, 0)

@@ -72,7 +72,8 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
 }
 
 
-int NTest(int d, int N_lower, int N_upper, int N_interval, char *file_name) {
+int NTest(int d, int N_lower, int N_upper, int N_interval, char *file_name) 
+{
 /*
 
 unmatched, d, N, p (ratio of N / (N-unmatched))
