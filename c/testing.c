@@ -58,7 +58,7 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
             fprintf(file,"%i,%i,%i,%f\n", unmatched, d, N, ((float) N) / (N-unmatched));
 
             cur_time = (long) time(NULL);
-            if (time(NULL) >= last_flush + FLUSH_TIME) {
+            if (cur_time >= last_flush + FLUSH_TIME) {
                 fflush(file);
                 last_flush = cur_time;
             }
@@ -70,6 +70,7 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
         }
     }
 }
+
 
 
 int NTest(int d, int N_lower, int N_upper, int N_interval, char *file_name) 

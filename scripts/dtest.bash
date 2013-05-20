@@ -3,3 +3,4 @@
 ./dtest.out 10000 44 4 ../../csv/dtest_N10000d44interval4.csv &
 ./dtest.out 50000 19 2 ../../csv/dtest_N50000d19interval2.csv &
 
+
