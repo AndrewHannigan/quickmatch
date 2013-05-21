@@ -190,6 +190,8 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
         dfs2dfs_time=0;
         hopcroft_steps=0;
 
+        int hopcroft_unmatched = unmatched;
+        int temp, num_inserted;
         for (unmatched=unmatched; unmatched>0; unmatched--) {
             START_TIMER             
             bfs_steps = bfs(graph,matching1);
@@ -216,10 +218,19 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
             STOP_TIMER
             dfs2dfs_time = seconds;
 
-            START_TIMER
-            hopcroft_steps = hopcroftPartial(graph,matching6);
-            STOP_TIMER
-            hopcroft_time = seconds;
+            // this logic accounts for the fact that sometimes hopcroftPhase inserts more than one edge into matching 
+            if (hopcroft_unmatched == unmatched) {
+                hopcroft_steps = 0;
+                temp = hopcroft_unmatched;
+                  START_TIMER
+                  hopcroftPhase(graph, matching6, &hopcroft_unmatched, &hopcroft_steps);
+                  STOP_TIMER
+                num_inserted = temp - hopcroft_unmatched;
+                //assert(hopcroft_unmatched == validateMatching(matching6, graph));
+                //assert(temp>hopcroft_unmatched);
+                hopcroft_steps = hopcroft_steps/num_inserted;
+                hopcroft_time = seconds/num_inserted;
+            }
 
             fprintf(file,"%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f\n", N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_steps, hopcroft_steps, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time);
 

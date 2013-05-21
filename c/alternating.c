@@ -574,7 +574,7 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
             // traverse to all unvisited nodes, use edges not in matching
             crawler = originalGraph->array[cur->label].head;
             while (crawler != NULL) {
-                (*steps)++;
+                (*steps) = (*steps) + 1;
                 if (visited[crawler->label] == 0) {
                     if (waveResult==2) waveResult = 0; // 2 indicates that there definitely are NO alternating paths left.  0 indicates we just haven't found one yet.
                     // insert into hungarianGraph
@@ -590,7 +590,7 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
             assert(matching[cur->label] != -1); // if it does, we should have stopped in previous iteration, unmatched vertex on AWAY was found
             insertToHungarian(hungarianGraph, cur->label, matching[cur->label]);
             enqueue(createQsNode(matching[cur->label]), newQueue);
-            (*steps) = *steps + 1;
+            (*steps) = (*steps) + 1;
         }
         free(cur);
     }
@@ -730,7 +730,7 @@ int hopcroftDFS(struct Graph *hungarianGraph, int *matching, int *steps)
 
         // Explore nodes
         discovered = hungarianGraph->array[cur->label].head;
-        (*steps) += 1;
+        (*steps) = (*steps) + 1;
 
         while (discovered != NULL) { 
             if (visited[discovered->label] == NULL) {
@@ -800,7 +800,6 @@ struct Graph *createHungarianGraph(struct Graph *originalGraph, int *matching, i
 int hopcroftPhase(struct Graph *originalGraph, int *matching, int *unmatched, int *steps) 
 {
     int isMatchingMaximal;
-    assert(unmatched > 0);
 
     struct Graph *hungarianGraph = createHungarianGraph(originalGraph, matching, steps);
     if (hungarianGraph == NULL) {
@@ -845,6 +844,7 @@ int hopcroftPartial(struct Graph *graph, int *matching) {
             unmatched++;
         }
     }
+    
 
     int isMatchingMaximal = false;
     while (unmatched > 0 && !isMatchingMaximal) {
