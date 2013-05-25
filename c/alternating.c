@@ -125,7 +125,7 @@ void traceBackAlternatingPath(int *matching, struct QsNode *theStart)
 }
 
 
-int bfs(struct Graph *graph, int *matching)
+int bfs(struct Graph *graph, int *matching, int *bfs_path_length)
 {
 
     // initialize visited, targets, and oldQueue  (REFACTOR WITH initVisit?)
@@ -153,11 +153,13 @@ int bfs(struct Graph *graph, int *matching)
     int level = 0;  
     int targetFound = -1;
     struct Queue *newQueue = createQueue();
+    *bfs_path_length = 0;
     while (targetFound == -1) {
         targetFound = bfsWave(graph, level, targets, visited, oldQueue, newQueue, graph->V/2, matching, &steps);
         free(oldQueue);
         oldQueue = newQueue;
         newQueue = createQueue();
+        (*bfs_path_length)++;
         level++;
     }
 

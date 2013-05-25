@@ -121,6 +121,7 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
 }
 
 
+
 int altTest(int N, int d, char *file_name) {
 /*
 
@@ -150,6 +151,10 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
     float dfs2bfs_time;
     float dfs2dfs_time;
     float hopcroft_time;
+    int bfs_path_length;
+    int hopcroft_phases;
+    int orig_unmatched;
+    
     int i;
     while (true) {
         int *right_sides;
@@ -163,6 +168,8 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
           laurens_steps = laurens(graph,&matching,&unmatched);
           STOP_TIMER
         laurens_time = seconds;
+
+        orig_unmatched = unmatched;
     
 
         // Copy a matching for each process
@@ -189,12 +196,13 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
         dfs2bfs_time=0;
         dfs2dfs_time=0;
         hopcroft_steps=0;
+        hopcroft_phases=0;
 
         int hopcroft_unmatched = unmatched;
         int temp, num_inserted;
         for (unmatched=unmatched; unmatched>0; unmatched--) {
             START_TIMER             
-            bfs_steps = bfs(graph,matching1);
+            bfs_steps = bfs(graph,matching1,&bfs_path_length);
             STOP_TIMER
             bfs_time = seconds;
 
@@ -220,6 +228,7 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
 
             // this logic accounts for the fact that sometimes hopcroftPhase inserts more than one edge into matching 
             if (hopcroft_unmatched == unmatched) {
+                hopcroft_phases++;
                 hopcroft_steps = 0;
                 temp = hopcroft_unmatched;
                   START_TIMER
@@ -232,9 +241,11 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
                 hopcroft_time = seconds/num_inserted;
             }
 
-            fprintf(file,"%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f\n", N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_steps, hopcroft_steps, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time);
+            fprintf(file,"%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f,%i\n", N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_steps, hopcroft_steps, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time, bfs_path_length);
 
         }
+
+        printf("%f,", orig_unmatched / (float) hopcroft_phases);
 
         // Validate
         validateMatching(matching1, graph);
@@ -257,6 +268,7 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
         cur_time = (long) time(NULL);
         if (time(NULL) >= last_flush + FLUSH_TIME) {
             fflush(file);
+            fflush(stdout);
             last_flush = cur_time;
         }
 
@@ -307,6 +319,7 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
     float dfs2bfs_time;
     float dfs2dfs_time;
     float hopcroft_time;
+    int bfs_path_length;
     int i;
     while (true) {
         int *right_sides;
@@ -349,7 +362,7 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
 
         for (i=0; i<unmatched; i++) {
             START_TIMER             
-            bfs_steps += bfs(graph,matching1);
+            bfs_steps += bfs(graph,matching1,&bfs_path_length);
             STOP_TIMER
             bfs_time += seconds;
 

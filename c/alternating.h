@@ -82,7 +82,7 @@ int bfsWave(struct Graph *graph, int level, struct QsNode **targets, struct QsNo
 
 int dfsWave(struct Graph *graph, enum SIDE startingSide, struct QsNode **targets, struct QsNode **visited, struct Stack *stack, int N, int *matching, int *steps);
 
-int bfs(struct Graph *graph, int *matching);
+int bfs(struct Graph *graph, int *matching, int *bfs_path_length);
 
 int dfs(struct Graph *graph, int *matching);
 
