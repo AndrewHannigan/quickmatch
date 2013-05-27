@@ -7,29 +7,46 @@ import math
 CSV_DIR = "../../csv/"
 
 
-print "Avg BFS2BFS N=100000 edges: ", avg_col(CSV_DIR + "B2B_100000.csv", 5)
-print "Avg BFS2BFS N=50000 edges: ", avg_col(CSV_DIR + "B2B_50000.csv", 5)
-print "Avg BFS2BFS N=25000 edges: ", avg_col(CSV_DIR + "B2B_25000.csv", 5)
-print "Avg BFS2BFS N=12500 edges: ", avg_col(CSV_DIR + "B2B_12500.csv", 5)
-print "Avg BFS2BFS N=6200 edges: ", avg_col(CSV_DIR + "B2B_6200.csv", 5)
-print "Avg BFS2BFS N=3100 edges: ", avg_col(CSV_DIR + "B2B_3100.csv", 5)
-print "Avg BFS2BFS N=1550 edges: ", avg_col(CSV_DIR + "B2B_1550.csv", 5)
-print "Avg BFS2BFS N=775 edges: ", avg_col(CSV_DIR + "B2B_775.csv", 5)
+#print "Avg BFS2BFS N=100000 edges:\t", avg_col(CSV_DIR + "B2B_100000.csv", 5)
+#print "Avg BFS2BFS N=50000 edges:\t", avg_col(CSV_DIR + "B2B_50000.csv", 5)
+#print "Avg BFS2BFS N=25000 edges:\t", avg_col(CSV_DIR + "B2B_25000.csv", 5)
+#print "Avg BFS2BFS N=12500 edges:\t", avg_col(CSV_DIR + "B2B_12500.csv", 5)
+#print "Avg BFS2BFS N=6200 edges:\t", avg_col(CSV_DIR + "B2B_6200.csv", 5)
+#print "Avg BFS2BFS N=3100 edges:\t", avg_col(CSV_DIR + "B2B_3100.csv", 5)
+#print "Avg BFS2BFS N=1550 edges:\t", avg_col(CSV_DIR + "B2B_1550.csv", 5)
+#print "Avg BFS2BFS N=775 edges:\t", avg_col(CSV_DIR + "B2B_775.csv", 5)
+#
+#
+#print "Avg BFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 3)
+#print "Avg DFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 4)
+#print "Avg BFS2BFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 5)
+#print "Avg DFS2BFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 6)
+#print "Avg DFS2DFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 7)
+#print "Avg Hopcroft edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 8)
 
 
-print "Avg BFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 3)
-print "Avg DFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 4)
-print "Avg BFS2BFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 5)
-print "Avg DFS2BFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 6)
-print "Avg DFS2DFS edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 7)
-print "Avg Hopcroft edges: ", avg_col(CSV_DIR + "alttest_N100000d3.csv", 8)
+
+# BFS2BFS time complexity for increasing N
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+ax.set_title("d = 3")
+x = [775,1550,3100,6200,12500,25000,50000,100000]
+y = [175.0, 254.0, 369.0, 521.0, 800.0, 1155.0, 1702.0, 2598.0]
+ax.plot(x,y,label="Average", marker="o")
+normalized_y = [y[i] / ((0.0023)*(x[i])**(0.6)) for i in range(len(x))]
+print normalized_y
+ax.plot(x,normalized_y,label="Normalized O(N^0.6)",marker="x")
+ax.set_xlabel("N")
+ax.set_ylabel("edges traversed")
+ax.set_xscale("log",basex=2)
+ax.legend(loc=0)
+print "BFS2BFS for increasing N DONE"
 
 
 def plot_dtest_avg(ax, x, y, N):
   ax.plot(x,y,label="Average", marker = '.')
   ax.set_xlabel("d")
   ax.set_ylabel("Miss Ratio")
-  ax.legend()
   print "dtest_avg N = " + str(N) + " DONE"
 
 
@@ -37,7 +54,6 @@ def plot_dtest_worst(ax, x, y, N):
   ax.plot(x,y,label="Worst Case", marker = '.')
   ax.set_xlabel("d")
   ax.set_ylabel("Miss Ratio")
-  ax.legend()
   x1,x2,y1,y2 = ax.axis()
 #  ax.axis((x1,x2,y1-1,y2))
   print "dtest_worst N = " + str(N) + " DONE"
@@ -120,7 +136,6 @@ ax.plot(x[1:],y, label="Average", marker = 'o')
 ax.set_xlabel("N")
 ax.set_ylabel("Miss Ratio")
 ax.set_xscale("log", basex=2)
-ax.legend(loc=0)
 print "ntest_avg DONE"
 
 
@@ -129,8 +144,8 @@ ax = fig.add_subplot(1,1,1)
 ax.set_title("d = 3")
 x,y = avg_plot_data(CSV_DIR + d3_file, 2, 0)
 ax.plot(x,y,label="Average", marker="o")
-normalized_y = [y[i] / (0.02*(x[i])**(0.5)) for i in range(len(x))]
-ax.plot(x,normalized_y,label="Normalized O(N^0.5)",marker="o")
+normalized_y = [y[i] / (0.02*(x[i])**(0.4)) for i in range(len(x))]
+ax.plot(x,normalized_y,label="Normalized O(N^0.4)",marker="x")
 ax.set_xlabel("N")
 ax.set_ylabel("Number of Missed Matches")
 ax.set_xscale("log",basex=2)
@@ -147,69 +162,8 @@ ax.plot(x,y,label="Maximum", marker = 'o')
 ax.set_xlabel("N")
 ax.set_ylabel("Miss Ratio")
 ax.set_xscale("log",basex=2)
-ax.legend(loc=0)
 print "ntest_worst DONE"
 
-
-#alttest --> N=10000
-#reader,f,ncol = open_csv(CSV_DIR + "alttest_N10000d3.csv")
-#bfs_steps = []
-#dfs_steps = []
-#bfs2bfs_steps = []
-#dfs2bfs_steps = []
-#dfs2dfs_steps = []
-#hopcroft_steps = []
-#bfs_time = []
-#dfs_time = []
-#bfs2bfs_time = []
-#dfs2bfs_time = []
-#dfs2dfs_time = []
-#hopcroft_time = []
-#for row in reader:
-#    bfs_steps.append(float(row[3]))
-#    dfs_steps.append(float(row[4]))
-#    bfs2bfs_steps.append(float(row[5]))
-#    dfs2bfs_steps.append(float(row[6]))
-#    dfs2dfs_steps.append(float(row[7]))
-#    hopcroft_steps.append(float(row[8]))
-#    bfs_time.append(float(row[9]))
-#    dfs_time.append(float(row[10]))
-#    bfs2bfs_time.append(float(row[11]))
-#    dfs2bfs_time.append(float(row[12]))
-#    dfs2dfs_time.append(float(row[13]))
-#    hopcroft_time.append(float(row[14]))
-#
-#
-
-
-#fig = plt.figure()
-##fig.suptitle("Distribution of Sorted Costs for Finding a Single Alternating Path when N = 10000, d = 3")
-#ax1 = fig.add_subplot(1,1,1)
-#ax1.set_title("Number of Edges Visited")
-#x = range(len(bfs_steps))
-#ax1.plot(x,sorted(bfs_steps), label='bfs')
-#ax1.plot(x,sorted(dfs_steps), label='dfs')
-#ax1.plot(x,sorted(bfs2bfs_steps), label='bfs2bfs')
-#ax1.plot(x,sorted(dfs2bfs_steps), label='bfs2dfs')
-#ax1.plot(x,sorted(dfs2dfs_steps), label='dfs2dfs')
-#ax1.plot(x,sorted(hopcroft_steps), label='hopcroft')
-#ax1.set_ylabel("edges visited")
-#ax1.set_xlabel("trial # (sorted by number of edges visited)")
-#ax1.legend(loc=0)
-#
-#fig = plt.figure()
-#ax2 = fig.add_subplot(1,1,1)
-#ax2.set_title("CPU Time")
-#ax2.plot(x,sorted(bfs_time), label='bfs')
-#ax2.plot(x,sorted(dfs_time), label='dfs')
-#ax2.plot(x,sorted(bfs2bfs_time), label='bfs2bfs')
-#ax2.plot(x,sorted(dfs2bfs_time), label='bfs2dfs')
-#ax2.plot(x,sorted(dfs2dfs_time), label='dfs2dfs')
-#ax2.plot(x,sorted(hopcroft_time), label='hopcroft')
-#ax2.set_ylabel("time (seconds)")
-#ax2.set_xlabel("trial # (sorted by CPU time)")
-#ax2.legend(loc=0)
-#f.close()
 
 
 #alttest --> N=100000, d=3
@@ -254,7 +208,7 @@ ax1.plot(x,sorted(dfs2bfs_steps), label='bfs2dfs')
 ax1.plot(x,sorted(dfs2dfs_steps), label='dfs2dfs')
 ax1.set_ylabel("edges visited")
 ax1.set_xlabel("trial # (sorted by number of edges traverse)")
-ax1.legend(loc=0)
+ax1.legend(loc=2)
 
 fig = plt.figure()
 ax2 = fig.add_subplot(1,1,1)
@@ -267,7 +221,7 @@ ax2.plot(x,sorted(dfs2bfs_time), label='bfs2dfs')
 ax2.plot(x,sorted(dfs2dfs_time), label='dfs2dfs')
 ax2.set_ylabel("time (seconds)")
 ax2.set_xlabel("trial # (sorted by CPU time)")
-ax2.legend(loc=0)
+ax2.legend(loc=2)
 
 f.close()
 plt.show()
