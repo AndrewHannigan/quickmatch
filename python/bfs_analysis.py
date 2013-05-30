@@ -1,28 +1,32 @@
-
 import matplotlib.pyplot as plt
 
-def computeRevisitProb(N,L,k):
-    # Number of visited nodes
-    visited = sum([L[i] for i in range(k) if i % 2 == k % 2])
-    return (1.0 - min(1.0, (float(visited) / float(N))))
 
-def expectedLayerSizes(N,d,startingSize,targetSize):
-    L = [1]
-    terminationProb=[0]
-    steps = [0]
-    for k in range(1,N):
-        L.append(computeRevisitProb(N,L,k) * d * L[k-1])
-        if L[k] == 0: break
-        #unvisited = N-sum([L[i] for i in range(k) if i % 2 == k % 2])
-        #terminationProb.append(L[k]/(N-visited))
+def computeLevelSizes(N,d,setSize):
+    N = float(N)
+    d = float(d)
+    f = [setSize]
+    level = 0
+    while True:
+        level += 1
+        if level % 2 == 1:
+            pastLevelsSum = sum([f[i] for i in range(level) if i % 2 == 1])
+            if pastLevelsSum>=N:
+                break
+            f.append((1-pastLevelsSum/N)*d*f[level-1])
+        else:
+            f.append(f[level-1])
+
+    print "Ended at level: ", level
+    return f
         
-    return L
-        
-y = expectedLayerSizes(100000,2,1,1)
-x = [sum(y[0:(i+1)]) for i in range(len(y))]
+y = computeLevelSizes(100000,3,1)
+y_cum = [sum(y[0:(i+1)]) for i in range(len(y))]
 print y
-print x
+print y_cum
 plt.plot(y)
+plt.xlabel("Level")
+plt.ylabel("Number of Vertices")
+plt.title("Modeling the Growth of BFS Levels")
 plt.show()
 
 

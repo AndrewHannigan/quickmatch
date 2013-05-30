@@ -1,0 +1,25 @@
+
+  ______      __    __   __    ______  __  ___ .___  ___.      ___   .___________.  ______  __    __  
+ /  __  \    |  |  |  | |  |  /      ||  |/  / |   \/   |     /   \  |           | /      ||  |  |  | 
+|  |  |  |   |  |  |  | |  | |  ,----'|  '  /  |  \  /  |    /  ^  \ `---|  |----`|  ,----'|  |__|  | 
+|  |  |  |   |  |  |  | |  | |  |     |    <   |  |\/|  |   /  /_\  \    |  |     |  |     |   __   | 
+|  `--'  '--.|  `--'  | |  | |  `----.|  .  \  |  |  |  |  /  _____  \   |  |     |  `----.|  |  |  | 
+ \_____\_____\\______/  |__|  \______||__|\__\ |__|  |__| /__/     \__\  |__|      \______||__|  |__| 
+
+
+QuickMactch: A Heuristic Algorithm for Compute Edge 
+                Colorings on Regular Bipartite Multigraphs
+
+                         By: Andrew Hannigan '13
+
+
+
+1) cd into c/
+2) run "make test"
+3) run "./test.out"
+4) options 2 and 6 are the simplest way to see the QuickMatch algorithm in action
+
+
+
+
+

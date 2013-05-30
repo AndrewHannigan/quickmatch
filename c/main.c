@@ -21,12 +21,12 @@ int main ( int argc, char *argv[] )
     char* N = (char*)malloc(max); 
     char* d = (char*)malloc(max); 
 
-    printf("\n1 ---> altTest() - runs laurens and tests all alternating-path-based fixup methods (bfs, bfs2bfs, etc.)\n");
-    printf("2 ---> basicLaurens()        - runs laurens and prints num unmatched\n");
-    printf("3 ---> basicLaurensPersist() - runs laurens and saves results to disk.  Records unmatched everytime, and right_sides only if we reach a new maxUnmatched.\n");
+    printf("\n1 ---> altTest() - runs QM and tests all alternating-path-based fixup methods (bfs, bfs2bfs, etc.)\n");
+    printf("2 ---> basicQuickMatch()        - runs QM and prints num unmatched\n");
+    printf("3 ---> basicQuickMatchPersist() - runs QM and saves results to disk.  Records unmatched everytime, and right_sides only if we reach a new maxUnmatched.\n");
     printf("4 ---> basicHopcroft()        - runs hopcroft and prints num unmatched\n");
-    printf("5 ---> hopcroftTest() - runs laurens and tests all hermit fixup methods (bfs, bfs2bfs, etc.)\n");
-    
+    printf("5 ---> hopcroftTest() - runs QM and tests all hermit fixup methods (bfs, bfs2bfs, etc.)\n");
+    printf("6 ---> edgeColoring()\n");
 
     getInput("\nSelect a test: ", userInput, max);
     int selection = atoi(userInput);
@@ -40,7 +40,7 @@ int main ( int argc, char *argv[] )
     }    
 
     else if (selection==2) {
-        printf("basicLaurens() selected\n");
+        printf("basicQuickMatch() selected\n");
         getInput("N: ", N, max);
         getInput("d: ", d, max);
         getInput("Forever? (y/n) ",userInput,max);
@@ -52,6 +52,7 @@ int main ( int argc, char *argv[] )
         else 
             printf("Didn't recognize input: %c\n\n",userInput[0]);
     }
+
     else if (selection==4) {
         printf("basicHopcroft() selected\n");
         getInput("N: ", N, max);
@@ -65,6 +66,7 @@ int main ( int argc, char *argv[] )
         else 
             printf("Didn't recognize input: %c\n\n",userInput[0]);
     }
+
     else if (selection==5) {
         printf("\nhopcroftTest() selected\n");
         getInput("Filename: ", userInput, max);
@@ -72,6 +74,14 @@ int main ( int argc, char *argv[] )
         getInput("d: ", d, max);
         hopcroftTest(atoi(N),atoi(d),userInput);
     }    
+
+    else if (selection==6) {
+        printf("\nedgeColoring() selected\n");
+        getInput("N: ", N, max);
+        getInput("d: ", d, max);
+        edgeColoring(atoi(N),atoi(d));
+    }    
+
     else 
         printf("\nInvalid Selection\n");
     

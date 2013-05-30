@@ -12,6 +12,7 @@
 #include "laurens.h"
 #include "timer.h"
 #include "alternating.h"
+#include "color.h"
 
 #define FLUSH_TIME 30
 /*
@@ -494,16 +495,16 @@ int hopcroftTest(int N, int d, char *file_name) {
 
 void basicLaurens(int N, int d, int runForever) {
     srandom(time(NULL));
-    int *right_sides, *matching, *matchingRand, unmatchedNormal;
+    int *right_sides, *matching, unmatched;
     struct Graph *graph;
     if (runForever) {
         while(true) {
             right_sides = createRightSides(N,d);
             graph = createRandomRegBipartite(N,d,0,right_sides);
               START_TIMER
-              int steps = laurens(graph,&matching,&unmatchedNormal); 
+              int steps = laurens(graph,&matching,&unmatched); 
               STOP_TIMER
-            printf("Missed %i out of %i matches\n", unmatchedNormal, N);
+            printf("Missed %i out of %i matches\n", unmatched, N);
             printf("%f seconds\n", seconds);
             printf("%i steps\n\n",steps);
             freeGraph(graph);
@@ -515,11 +516,22 @@ void basicLaurens(int N, int d, int runForever) {
         right_sides = createRightSides(N,d);
         graph = createRandomRegBipartite(N,d,0,right_sides);
           START_TIMER
-          int steps = laurens(graph,&matching,&unmatchedNormal); 
+          int steps = laurens(graph,&matching,&unmatched); 
           STOP_TIMER
-        printf("Missed %i out of %i matches\n", unmatchedNormal, N);
+        printf("QUICKMATCH:\n");
+        printf("Missed %i out of %i matches\n", unmatched, N);
         printf("%f seconds\n", seconds);
         printf("%i steps\n\n",steps);
+
+        START_TIMER
+        int i;
+        for (i=0; i<unmatched; i++) {
+            dfs2dfs(graph,matching);
+        }
+        STOP_TIMER
+        printf("DFS-TO-DFS:\n", seconds);
+        printf("%f seconds\n\n", seconds);
+
         free(matching);
         freeGraph(graph);
         free(right_sides);
@@ -597,6 +609,30 @@ int basicLaurensPersist(int N, int d, char *file_name, FILE *graphFile)
     return 0; 
 }
 
+void edgeColoring(int N, int d) {
+    int i;
+    printf("N=%i, d=%i\n\n", N, d);
+    srandom(time(NULL));
+    int *right_sides, *matching, unmatched;
+    struct Graph *graph, *graphCopy;
+
+    right_sides = createRightSides(N,d);
+    graph = createRandomRegBipartite(N,d,false,right_sides);
+    graphCopy = createRandomRegBipartite(N,d,false,right_sides);
+
+    START_TIMER
+    int **matchings;
+    matchings = colorGraphLaurens(graph);
+    STOP_TIMER
+    printf("\nFinished in %f seconds\n\n", seconds);
+
+    // WARNING: BAD TIME COMPLEXITY O(d*E)
+    for (i=d-1; i>=0; i--) {
+        validateMatching(matchings[i], graphCopy);
+        printf("Matching %i valid. \n", i);
+        removeMatching(graphCopy, matchings[i]);
+    }
+}
 
 
 char *getInput(char *prompt, char *userInput, int max)

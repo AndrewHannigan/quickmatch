@@ -25,6 +25,8 @@ int *convertGraphToMatching(struct Graph *graph) {
 
 int **colorGraphLaurens(struct Graph *graph)
 {
+        printf("Finished building the graph.\n");
+        printf("START COLORING.\n\n");
 	int d = graph->d;
 	colorings = malloc(graph->d * sizeof(struct Graph*));
 	colorLaurens(graph);
@@ -35,16 +37,17 @@ int **colorGraphLaurens(struct Graph *graph)
 
 void colorLaurens(struct Graph *graph)
 {
-    printf("Degree: %i\n", graph->d);
 
     // record matching
     if (graph->d == 1) {
+        printf("Degree = 1, storing matching\n");
     	colorings[coloringsCount] = convertGraphToMatching(graph);
     	coloringsCount++;
     }
     
     // trace out cycles to divide into two graphs
     else if (graph->d % 2 == 0) {
+        printf("Degree = %i, tracing cycles\n", graph->d);
     	struct Graph *outGraph1;
     	struct Graph *outGraph2;
     	traceEvenDegree(graph, &outGraph1, &outGraph2);
@@ -54,10 +57,11 @@ void colorLaurens(struct Graph *graph)
     
     // compute and remove a matching
     else {
+        printf("Degree = %i, removing a perfect matching\n", graph->d);
         int *matching, unmatched, i;
         laurens(graph,&matching,&unmatched);
         for (i=0; i<unmatched; i++) {
-            bfs2bfs(graph,matching);
+            dfs2dfs(graph,matching);
         }
 
         removeMatching(graph, matching);

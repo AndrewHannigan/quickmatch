@@ -115,9 +115,7 @@ void traceEvenDegree(struct Graph *graph, struct Graph **outGraph1, struct Graph
     }
 
     // update neighborhoods
-    for (i=0; i<graph->V; i++) { 
-        (*outGraph1)->array[i].neighborhood = new_d; 
-        (*outGraph2)->array[i].neighborhood = new_d; 
-    }
+    computeNeighborhoods(*outGraph1); 
+    computeNeighborhoods(*outGraph2); 
 }
 

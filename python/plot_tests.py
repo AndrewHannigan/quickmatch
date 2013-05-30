@@ -32,22 +32,23 @@ ax = fig.add_subplot(1,1,1)
 ax.set_title("d = 3")
 x = [775,1550,3100,6200,12500,25000,50000,100000]
 y = [175.0, 254.0, 369.0, 521.0, 800.0, 1155.0, 1702.0, 2598.0]
-ax.plot(x,y,label="Average", marker="o")
+ax.plot(x,y,label='Average', marker="o")
 normalized_y = [y[i] / ((0.0023)*(x[i])**(0.6)) for i in range(len(x))]
 print normalized_y
-ax.plot(x,normalized_y,label="Normalized O(N^0.6)",marker="x")
-ax.set_xlabel("N")
-ax.set_ylabel("edges traversed")
+ax.plot(x,normalized_y,label='Normalized 0.0023*n^0.6',marker="x")
+ax.set_xlabel('n')
+ax.set_ylabel("edges examined")
 ax.set_xscale("log",basex=2)
 ax.legend(loc=0)
-print "BFS2BFS for increasing N DONE"
-
+print "BFS2BFS for increasing n DONE"
 
 def plot_dtest_avg(ax, x, y, N):
   ax.plot(x,y,label="Average", marker = '.')
   ax.set_xlabel("d")
   ax.set_ylabel("Miss Ratio")
-  print "dtest_avg N = " + str(N) + " DONE"
+  x1,x2,y1,y2 = ax.axis()
+  ax.axis((x1,x2,0,y2))
+  print "dtest_avg n = " + str(N) + " DONE"
 
 
 def plot_dtest_worst(ax, x, y, N):
@@ -55,25 +56,25 @@ def plot_dtest_worst(ax, x, y, N):
   ax.set_xlabel("d")
   ax.set_ylabel("Miss Ratio")
   x1,x2,y1,y2 = ax.axis()
-#  ax.axis((x1,x2,y1-1,y2))
-  print "dtest_worst N = " + str(N) + " DONE"
+  ax.axis((x1,max(x)+1,0,max(y)))
+  print "dtest_worst n = " + str(N) + " DONE"
 
 # dtest
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(2,2,1)
-ax1.set_title("N = 100")
+ax1.set_title("n = 100")
 ax2 = fig1.add_subplot(2,2,2)
-ax2.set_title("N = 1000")
+ax2.set_title("n = 1000")
 ax3 = fig1.add_subplot(2,2,3)
-ax3.set_title("N = 10000")
+ax3.set_title("n = 10000")
 ax4 = fig1.add_subplot(2,2,4)
-ax4.set_title("N = 100000")
+ax4.set_title("n = 100000")
 
 
 N100_file = "../../dtest_N100d20interval2.csv"
 N1000_file = "dtest_N1000d40interval4.csv"
 N10000_file = "dtest_N10000d44interval4.csv"
-N50000_file = "dtest_N50000d19interval2.csv"
+N50000_file = "dtest_N50000d19interval2_COMBINED.csv"
 
 
 x,y = avg_plot_data(N100_file, 1, 0)
@@ -95,13 +96,13 @@ plot_dtest_avg(ax4, x, y, 100000)
 
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(2,2,1)
-ax1.set_title("N = 100")
+ax1.set_title("n = 100")
 ax2 = fig1.add_subplot(2,2,2)
-ax2.set_title("N = 1000")
+ax2.set_title("n = 1000")
 ax3 = fig1.add_subplot(2,2,3)
-ax3.set_title("N = 10000")
+ax3.set_title("n = 10000")
 ax4 = fig1.add_subplot(2,2,4)
-ax4.set_title("N = 100000")
+ax4.set_title("n = 100000")
 
 x,y = max_plot_data(N100_file, 1, 0)
 y = [y[i]/100. for i in range(len(y))]
@@ -133,7 +134,7 @@ ax.set_title("d = 3")
 x,y = avg_plot_data(CSV_DIR + d3_file, 2, 0)
 y = [y[i]/float(x[i]) for i in range(1,len(y))]
 ax.plot(x[1:],y, label="Average", marker = 'o')
-ax.set_xlabel("N")
+ax.set_xlabel("n")
 ax.set_ylabel("Miss Ratio")
 ax.set_xscale("log", basex=2)
 print "ntest_avg DONE"
@@ -145,8 +146,8 @@ ax.set_title("d = 3")
 x,y = avg_plot_data(CSV_DIR + d3_file, 2, 0)
 ax.plot(x,y,label="Average", marker="o")
 normalized_y = [y[i] / (0.02*(x[i])**(0.4)) for i in range(len(x))]
-ax.plot(x,normalized_y,label="Normalized O(N^0.4)",marker="x")
-ax.set_xlabel("N")
+ax.plot(x,normalized_y,label="Normalized 0.02*n^0.4",marker="x")
+ax.set_xlabel("n")
 ax.set_ylabel("Number of Missed Matches")
 ax.set_xscale("log",basex=2)
 ax.legend(loc=0)
@@ -154,20 +155,29 @@ print "ntest_avg_normalization DONE"
 
 
 fig = plt.figure()
-ax = fig.add_subplot(1,1,1)
+ax = fig.add_subplot(1,2,1)
 ax.set_title("d = 3")
 x,y = max_plot_data(CSV_DIR + d3_file, 2, 0)
 y = [y[i] / float(x[i]) for i in range(len(x))]
+print x
+print y
 ax.plot(x,y,label="Maximum", marker = 'o')
-ax.set_xlabel("N")
+ax.set_xlabel("n")
+ax.set_ylabel("Miss Ratio")
+ax.set_xscale("log",basex=2)
+print "ntest_worst DONE"
+
+ax = fig.add_subplot(1,2,2)
+ax.set_title("d = 3 (showing only large values of n)")
+ax.plot(x[6:],y[6:],label="Maximum", marker = 'o')
+ax.set_xlabel("n")
 ax.set_ylabel("Miss Ratio")
 ax.set_xscale("log",basex=2)
 print "ntest_worst DONE"
 
 
-
 #alttest --> N=100000, d=3
-reader,f,ncol = open_csv(CSV_DIR + "alttest_N100000d3.csv")
+reader,f,ncol = open_csv(CSV_DIR + "alttest_N100000d3_COMBINED.csv")
 bfs_steps = []
 dfs_steps = []
 bfs2bfs_steps = []
@@ -194,11 +204,33 @@ for row in reader:
     dfs2dfs_time.append(float(row[13]))
     hopcroft_time.append(float(row[14]))
 
+fig = plt.figure()
+#fig.suptitle("Distribution of Costs for Finding a Single Alternating Path for N = 100000, d = 3")
+ax1 = fig.add_subplot(1,1,1)
+ax1.set_title("Number of Edges Examined for d=3, n=100000")
+x = range(len(bfs_steps))
+ax1.plot(x,sorted(hopcroft_steps), label='hopcroft')
+ax1.plot(x,sorted(bfs_steps), label='bfs')
+ax1.plot(x,sorted(dfs_steps), label='dfs')
+ax1.set_ylabel("edges examined")
+ax1.set_xlabel("trials sorted by number of edges examined")
+ax1.legend(loc=2)
+
+fig = plt.figure()
+ax2 = fig.add_subplot(1,1,1)
+ax2.set_title("CPU Time for d=3, n=100000")
+ax2.plot(x,sorted(hopcroft_time), label='hopcroft')
+ax2.plot(x,sorted(bfs_time), label='bfs')
+ax2.plot(x,sorted(dfs_time), label='dfs')
+ax2.set_ylabel("time (seconds)")
+ax2.set_xlabel("trial sorted by CPU time")
+ax2.legend(loc=2)
+
 
 fig = plt.figure()
 #fig.suptitle("Distribution of Costs for Finding a Single Alternating Path for N = 100000, d = 3")
 ax1 = fig.add_subplot(1,1,1)
-ax1.set_title("Number of Edges Traversed for d=3, N=100000")
+ax1.set_title("Number of Edges Examined for d=3, n=100000")
 x = range(len(bfs_steps))
 ax1.plot(x,sorted(hopcroft_steps), label='hopcroft')
 ax1.plot(x,sorted(bfs_steps), label='bfs')
@@ -206,13 +238,13 @@ ax1.plot(x,sorted(dfs_steps), label='dfs')
 ax1.plot(x,sorted(bfs2bfs_steps), label='bfs2bfs')
 ax1.plot(x,sorted(dfs2bfs_steps), label='bfs2dfs')
 ax1.plot(x,sorted(dfs2dfs_steps), label='dfs2dfs')
-ax1.set_ylabel("edges visited")
-ax1.set_xlabel("trial # (sorted by number of edges traverse)")
+ax1.set_ylabel("edges examined")
+ax1.set_xlabel("trials sorted by number of edges examined")
 ax1.legend(loc=2)
 
 fig = plt.figure()
 ax2 = fig.add_subplot(1,1,1)
-ax2.set_title("CPU Time for d=3, N=100000")
+ax2.set_title("CPU Time for d=3, n=100000")
 ax2.plot(x,sorted(hopcroft_time), label='hopcroft')
 ax2.plot(x,sorted(bfs_time), label='bfs')
 ax2.plot(x,sorted(dfs_time), label='dfs')
@@ -220,7 +252,7 @@ ax2.plot(x,sorted(bfs2bfs_time), label='bfs2bfs')
 ax2.plot(x,sorted(dfs2bfs_time), label='bfs2dfs')
 ax2.plot(x,sorted(dfs2dfs_time), label='dfs2dfs')
 ax2.set_ylabel("time (seconds)")
-ax2.set_xlabel("trial # (sorted by CPU time)")
+ax2.set_xlabel("trials sorted by CPU time")
 ax2.legend(loc=2)
 
 f.close()
