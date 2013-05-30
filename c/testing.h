@@ -10,11 +10,11 @@ int bigTest(int N, int d, char *file_name);
 
 int hopcroftTest(int N, int d, char *file_name);
 
-void basicLaurens(int N, int d, int runForever);
+void basicQuickmatch(int N, int d, int runForever);
 
 void basicHopcroft(int N, int d, int runForever);
 
-int basicLaurensPersist(int N, int d, char *file_name, FILE *graphFile);
+int basicQuickmatchPersist(int N, int d, char *file_name, FILE *graphFile);
 
 char *getInput(char *prompt, char *userInput, int max);
 

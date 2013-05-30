@@ -7,7 +7,7 @@
 /*
     These functions will dismantle and/or delete nodes from graph, make sure to pass it a copy and not the original.
     
-    These functions will return graphs that a ready to be consumed by laurens (correct neighborhoods)
+    These functions will return graphs that a ready to be consumed by quickmatch (correct neighborhoods)
 */
 
 // O(E) time

@@ -4,12 +4,12 @@
 #include <assert.h>
 #include <string.h>
 #include "graph.h"
-#include "laurens.h"
+#include "quickmatch.h"
 
 
 /**** MAIN METHOD ****/
 
-int laurensPartial(struct Graph *graph, int **outMatching, int *outUnmatched, int stopSize)
+int quickmatchPartial(struct Graph *graph, int **outMatching, int *outUnmatched, int stopSize)
 {
 //  (1) Initialize     
     int steps = 0;
@@ -22,7 +22,6 @@ int laurensPartial(struct Graph *graph, int **outMatching, int *outUnmatched, in
     struct NodeList *nodeLists = graph->array;
     struct NeighborhoodStacks *ns = createNeighborhoodStacks(graph);
 
-    steps += N + 2*N + 2*N;
 
 //  (2) Main         
     for (i=graph->V/2; i>stopSize; i--) {
@@ -57,9 +56,9 @@ int laurensPartial(struct Graph *graph, int **outMatching, int *outUnmatched, in
 
 
 
-int laurens(struct Graph *graph, int **outMatching, int *outUnmatched) 
+int quickmatch(struct Graph *graph, int **outMatching, int *outUnmatched) 
 {
-    return laurensPartial(graph, outMatching, outUnmatched, 0);
+    return quickmatchPartial(graph, outMatching, outUnmatched, 0);
 }
 
 
@@ -129,10 +128,12 @@ void insertIntoMatching(int a, int b, int *matching, short *matched, struct Node
     matched[b] = 1;
     nodeLists[a].neighborhood = 0;
     nodeLists[b].neighborhood = 0;
+    *steps += 2;
 
     // update all data structures for adjacent nodes
     struct Node *crawler = nodeLists[a].head;
     while (crawler != NULL) { 
+        *steps += 1;
         if (nodeLists[crawler->label].neighborhood != 0 && crawler_table[crawler->label] == 0) {
             nodeLists[crawler->label].neighborhood-= 1;
             crawler_table[crawler->label] = 1;
@@ -153,6 +154,7 @@ void insertIntoMatching(int a, int b, int *matching, short *matched, struct Node
 
     crawler = nodeLists[b].head;
     while (crawler != NULL) { 
+        *steps += 1;
         if (nodeLists[crawler->label].neighborhood != 0 && crawler_table[crawler->label] == 0) {
             nodeLists[crawler->label].neighborhood -= 1;
             crawler_table[crawler->label] = 1;
@@ -169,7 +171,6 @@ void insertIntoMatching(int a, int b, int *matching, short *matched, struct Node
         crawler = crawler->next;
     }
 
-    *steps += 21;
 }
 
 
@@ -180,18 +181,16 @@ void insertIntoMatching(int a, int b, int *matching, short *matched, struct Node
 
 struct Node* getNextNode(struct NeighborhoodStacks *ns, struct Graph *graph, short *matched, int d, int *steps)
 {
+    *steps += 1;
     int n = 1;
     struct Node *cur;
-    *steps += 2;
     for (n=1; n<d+1; ++n) {
         cur = popNS(n, ns);
-        *steps += 1;
         while (cur != NULL) {
             if(matched[cur->label] == 0 && graph->array[cur->label].neighborhood != 0)
                 return cur;
             free(cur);
             cur = popNS(n,ns);
-            *steps += 5;
         }
     }
 
@@ -206,7 +205,6 @@ struct Node* getMatch(struct NodeList *current, struct Graph *graph, short *matc
     struct NodeList *nodeLists = graph->array;
     struct Node *match = NULL; 
     struct Node *crawler = nodeLists[cur.label].head;
-    *steps += 4;
     
     // find first valid neighbor
     while (crawler != NULL) {
@@ -215,19 +213,19 @@ struct Node* getMatch(struct NodeList *current, struct Graph *graph, short *matc
             break;
         }
         crawler = crawler->next;
-        *steps += 3;
+        *steps += 1;
     }
     assert(match != NULL); 
      
     // find min degree neighbor
     while (crawler != NULL) {
+        *steps += 1;
         if (nodeLists[crawler->label].neighborhood > 0 \
               && nodeLists[crawler->label].neighborhood < nodeLists[match->label].neighborhood \
               && matched[crawler->label] == 0) { 
             match = crawler; 
         }
         crawler = crawler->next;
-        *steps += 6;
     }
     return match;
 }

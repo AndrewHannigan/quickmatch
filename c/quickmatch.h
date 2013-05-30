@@ -3,9 +3,9 @@
 #define LAURENS_H
 
 
-int laurensPartial(struct Graph *graph, int **outMatching, int *outUnmatched, int stopSize);
+int quickmatchPartial(struct Graph *graph, int **outMatching, int *outUnmatched, int stopSize);
 
-int laurens(struct Graph *graph, int **outMatching, int *outUnmatched);
+int quickmatch(struct Graph *graph, int **outMatching, int *outUnmatched);
 
 int *initMatching(int N);
 

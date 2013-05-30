@@ -9,16 +9,16 @@
 #include <unistd.h>
 #include <time.h>
 #include "graph.h"
-#include "laurens.h"
+#include "quickmatch.h"
 #include "timer.h"
-#include "alternating.h"
+#include "augmenting.h"
 #include "color.h"
 
 #define FLUSH_TIME 30
 /*
     Add hopcroft tests
         1) just hopcroft
-        2) laurens until N^(2/3), then hopcroft, then bfs
+        2) quickmatch until N^(2/3), then hopcroft, then bfs
 
     Add timing for all testing
 
@@ -46,12 +46,12 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
             int *right_sides;
             int *matching;
             int unmatched = 0;
-            int laurens_steps;
+            int quickmatch_steps;
             struct Graph *graph;
 
             right_sides = createRightSides(N,d);
             graph = createRandomRegBipartite(N,d,0,right_sides);
-            laurens_steps = laurens(graph,&matching,&unmatched);
+            quickmatch_steps = quickmatch(graph,&matching,&unmatched);
 
             // Validate
             validateMatching(matching, graph);
@@ -95,12 +95,12 @@ unmatched, d, N, p (ratio of N / (N-unmatched))
             int *right_sides;
             int *matching;
             int unmatched = 0;
-            int laurens_steps;
+            int quickmatch_steps;
             struct Graph *graph;
 
             right_sides = createRightSides(N,d);
             graph = createRandomRegBipartite(N,d,0,right_sides);
-            laurens_steps = laurens(graph,&matching,&unmatched);
+            quickmatch_steps = quickmatch(graph,&matching,&unmatched);
 
             // Validate
             validateMatching(matching, graph);
@@ -138,14 +138,14 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
 
     //srandom(time(NULL));
     srandom(SEED);
-    int laurens_steps;
+    int quickmatch_steps;
     int bfs_steps;
     int dfs_steps;
     int bfs2bfs_steps;
     int dfs2bfs_steps;
     int dfs2dfs_steps;
     int hopcroft_steps;
-    float laurens_time;
+    float quickmatch_time;
     float bfs_time;
     float dfs_time;
     float bfs2bfs_time;
@@ -166,9 +166,9 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
         right_sides = createRightSides(N,d);
         graph = createRandomRegBipartite(N,d,0,right_sides);
           START_TIMER
-          laurens_steps = laurens(graph,&matching,&unmatched);
+          quickmatch_steps = quickmatch(graph,&matching,&unmatched);
           STOP_TIMER
-        laurens_time = seconds;
+        quickmatch_time = seconds;
 
         orig_unmatched = unmatched;
     
@@ -294,7 +294,7 @@ N, d, unmatched, bfs_steps, dfs_steps, bfs2bfs_steps, dfs2bfs_steps, dfs2dfs_ste
 int bigTest(int N, int d, char *file_name) {
 /*
 
-unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/unmatchedFloat, dfs2bfs_steps/unmatchedFloat, dfs2dfs_steps/unmatchedFloat, dfs_steps/unmatchedFloat, bfs_time, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time
+unmatched, quickmatch_steps, quickmatch_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/unmatchedFloat, dfs2bfs_steps/unmatchedFloat, dfs2dfs_steps/unmatchedFloat, dfs_steps/unmatchedFloat, bfs_time, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time
 
 */
     long last_flush = 0;
@@ -306,14 +306,14 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
 
     //srandom(time(NULL));
     srandom(SEED);
-    int laurens_steps;
+    int quickmatch_steps;
     int bfs_steps;
     int dfs_steps;
     int bfs2bfs_steps;
     int dfs2bfs_steps;
     int dfs2dfs_steps;
     int hopcroft_steps;
-    float laurens_time;
+    float quickmatch_time;
     float bfs_time;
     float dfs_time;
     float bfs2bfs_time;
@@ -331,9 +331,9 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
         right_sides = createRightSides(N,d);
         graph = createRandomRegBipartite(N,d,0,right_sides);
           START_TIMER
-          laurens_steps = laurens(graph,&matching,&unmatched);
+          quickmatch_steps = quickmatch(graph,&matching,&unmatched);
           STOP_TIMER
-        laurens_time = seconds;
+        quickmatch_time = seconds;
     
 
         // Copy a matching for each process
@@ -410,7 +410,7 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
     
         float unmatchedFloat = (float) unmatched;
         
-        fprintf(file,"%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/unmatchedFloat, dfs2bfs_steps/unmatchedFloat, dfs2dfs_steps/unmatchedFloat, dfs_steps/unmatchedFloat, hopcroft_steps/unmatchedFloat, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time);
+        fprintf(file,"%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", unmatched, quickmatch_steps, quickmatch_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/unmatchedFloat, dfs2bfs_steps/unmatchedFloat, dfs2dfs_steps/unmatchedFloat, dfs_steps/unmatchedFloat, hopcroft_steps/unmatchedFloat, bfs_time, dfs_time, bfs2bfs_time, dfs2bfs_time, dfs2dfs_time, hopcroft_time);
     
         cur_time = (long) time(NULL);
         if (time(NULL) >= last_flush + FLUSH_TIME) {
@@ -437,7 +437,7 @@ unmatched, laurens_steps, laurens_time, bfs_steps/unmatchedFloat, bfs2bfs_steps/
 
 int hopcroftTest(int N, int d, char *file_name) {
 /*
-    hopcroft_steps, hopcroft_time, laurensHopcroft_steps, laurensHopcroft_time, laurensHopcroft_unmatched
+    hopcroft_steps, hopcroft_time, quickmatchHopcroft_steps, quickmatchHopcroft_time, quickmatchHopcroft_unmatched
 */
     FILE *file; 
     file = fopen(file_name,"a+"); // append file (add text to a file or 
@@ -446,10 +446,10 @@ int hopcroftTest(int N, int d, char *file_name) {
 
     srandom(SEED);
     int hopcroft_steps=0;
-    int laurensHopcroft_steps=0;
+    int quickmatchHopcroft_steps=0;
 
     float hopcroft_time=0.0;
-    float laurensHopcroft_time=0.0;
+    float quickmatchHopcroft_time=0.0;
     int i;
     while (true) {
         int *right_sides;
@@ -469,18 +469,18 @@ int hopcroftTest(int N, int d, char *file_name) {
         resetGraph(graph);
 
         START_TIMER
-        laurensHopcroft_steps = laurens_hopcroft(graph, &matching2); 
+        quickmatchHopcroft_steps = quickmatch_hopcroft(graph, &matching2); 
         STOP_TIMER
-        laurensHopcroft_time = seconds;
+        quickmatchHopcroft_time = seconds;
 
 
         // Validate
         assert(0 == validateMatching(matching1, graph));
-        int laurensHopcroft_unmatched = validateMatching(matching2, graph);
+        int quickmatchHopcroft_unmatched = validateMatching(matching2, graph);
 
         
         printf("printing to file\n");
-        fprintf(file,"%i,%f,%i,%f,%i\n", hopcroft_steps, hopcroft_time, laurensHopcroft_steps, laurensHopcroft_time, laurensHopcroft_unmatched);        // Free
+        fprintf(file,"%i,%f,%i,%f,%i\n", hopcroft_steps, hopcroft_time, quickmatchHopcroft_steps, quickmatchHopcroft_time, quickmatchHopcroft_unmatched);        // Free
         fflush(file);
         freeGraph(graph);
         free(right_sides);
@@ -493,7 +493,7 @@ int hopcroftTest(int N, int d, char *file_name) {
 }
 
 
-void basicLaurens(int N, int d, int runForever) {
+void basicQuickmatch(int N, int d, int runForever) {
     srandom(time(NULL));
     int *right_sides, *matching, unmatched;
     struct Graph *graph;
@@ -502,11 +502,10 @@ void basicLaurens(int N, int d, int runForever) {
             right_sides = createRightSides(N,d);
             graph = createRandomRegBipartite(N,d,0,right_sides);
               START_TIMER
-              int steps = laurens(graph,&matching,&unmatched); 
+              int steps = quickmatch(graph,&matching,&unmatched); 
               STOP_TIMER
             printf("Missed %i out of %i matches\n", unmatched, N);
-            printf("%f seconds\n", seconds);
-            printf("%i steps\n\n",steps);
+            printf("%f seconds\n\n",seconds);
             freeGraph(graph);
             free(right_sides);
             free(matching);
@@ -516,12 +515,11 @@ void basicLaurens(int N, int d, int runForever) {
         right_sides = createRightSides(N,d);
         graph = createRandomRegBipartite(N,d,0,right_sides);
           START_TIMER
-          int steps = laurens(graph,&matching,&unmatched); 
+          int steps = quickmatch(graph,&matching,&unmatched); 
           STOP_TIMER
         printf("QUICKMATCH:\n");
         printf("Missed %i out of %i matches\n", unmatched, N);
-        printf("%f seconds\n", seconds);
-        printf("%i steps\n\n",steps);
+        printf("%f seconds\n\n", seconds);
 
         START_TIMER
         int i;
@@ -549,7 +547,7 @@ void basicHopcroft(int N, int d, int runForever) {
             right_sides = createRightSides(N,d);
             originalGraph = createRandomRegBipartite(N,d,false,right_sides);
             int steps = hopcroft(originalGraph, &matching);
-            printf("unmatched: %i\n", validateMatching(matching, originalGraph));
+            printf("Missed %i of %i Matches\n", validateMatching(matching, originalGraph),N);
             printf("steps: %i\n", steps);
             freeGraph(originalGraph);
             free(right_sides);
@@ -562,9 +560,8 @@ void basicHopcroft(int N, int d, int runForever) {
         START_TIMER
         int steps = hopcroft(originalGraph, &matching);
         STOP_TIMER
-        printf("unmatched: %i\n", validateMatching(matching, originalGraph));
+        printf("Missed %i of %i Matches\n", validateMatching(matching, originalGraph),N);
         printf("%f seconds\n", seconds);
-        printf("%i steps\n\n",steps);
         freeGraph(originalGraph);
         free(right_sides);
         free(matching);
@@ -573,13 +570,13 @@ void basicHopcroft(int N, int d, int runForever) {
 
 
 
-int basicLaurensPersist(int N, int d, char *file_name, FILE *graphFile)
+int basicQuickmatchPersist(int N, int d, char *file_name, FILE *graphFile)
 {
     FILE *file; 
     // append file (add text to a file or create a file if it does not exist
     if( access( file_name, F_OK ) == -1 ) {
         file = fopen(file_name,"a+");
-        fprintf(file,"Number of missed matches by laurens method for N=%i, d=%i.\n",N,d);
+        fprintf(file,"Number of missed matches by quickmatch method for N=%i, d=%i.\n",N,d);
     }
     else {
         file=fopen(file_name,"a+");
@@ -591,10 +588,10 @@ int basicLaurensPersist(int N, int d, char *file_name, FILE *graphFile)
     while (true) {
         right_sides = createRightSides(N,d);
         graph = createRandomRegBipartite(N,d,true,right_sides);
-        laurens(graph,&matching,&unmatched);
+        quickmatch(graph,&matching,&unmatched);
         free(matching);
         if (unmatched > maxUnmatched) {
-            fprintf(graphFile,"Laurens Method - N=%i, d=%i - %i missed matches.\n",N,d,unmatched);            
+            fprintf(graphFile,"Quickmatch Method - N=%i, d=%i - %i missed matches.\n",N,d,unmatched);            
             fprintf(graphFile,"{%i", right_sides[0]);
             for (i=1; i<N*d; i++) { 
                 fprintf(graphFile,",%i",right_sides[1]);
@@ -622,7 +619,7 @@ void edgeColoring(int N, int d) {
 
     START_TIMER
     int **matchings;
-    matchings = colorGraphLaurens(graph);
+    matchings = colorGraphQuickmatch(graph);
     STOP_TIMER
     printf("\nFinished in %f seconds\n\n", seconds);
 

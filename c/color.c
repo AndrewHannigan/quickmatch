@@ -4,8 +4,8 @@
 #include <time.h>
 #include <stdbool.h>
 #include "graph.h"
-#include "laurens.h"
-#include "alternating.h"
+#include "quickmatch.h"
+#include "augmenting.h"
 #include "cycles.h"
 #include "color.h"
 
@@ -23,19 +23,19 @@ int *convertGraphToMatching(struct Graph *graph) {
 	return matching;
 }
 
-int **colorGraphLaurens(struct Graph *graph)
+int **colorGraphQuickmatch(struct Graph *graph)
 {
         printf("Finished building the graph.\n");
         printf("START COLORING.\n\n");
 	int d = graph->d;
 	colorings = malloc(graph->d * sizeof(struct Graph*));
-	colorLaurens(graph);
+	colorQuickmatch(graph);
 	return colorings;
 }
 
 
 
-void colorLaurens(struct Graph *graph)
+void colorQuickmatch(struct Graph *graph)
 {
 
     // record matching
@@ -51,15 +51,15 @@ void colorLaurens(struct Graph *graph)
     	struct Graph *outGraph1;
     	struct Graph *outGraph2;
     	traceEvenDegree(graph, &outGraph1, &outGraph2);
-    	colorLaurens(outGraph1);
-    	colorLaurens(outGraph2);
+    	colorQuickmatch(outGraph1);
+    	colorQuickmatch(outGraph2);
     }
     
     // compute and remove a matching
     else {
         printf("Degree = %i, removing a perfect matching\n", graph->d);
         int *matching, unmatched, i;
-        laurens(graph,&matching,&unmatched);
+        quickmatch(graph,&matching,&unmatched);
         for (i=0; i<unmatched; i++) {
             dfs2dfs(graph,matching);
         }
@@ -67,6 +67,6 @@ void colorLaurens(struct Graph *graph)
         removeMatching(graph, matching);
         colorings[coloringsCount] = matching;
         coloringsCount++;
-        colorLaurens(graph);
+        colorQuickmatch(graph);
     }
 }

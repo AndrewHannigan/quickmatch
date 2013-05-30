@@ -1,3 +1,5 @@
+// Provided by Tom Cormen 
+
 #ifndef TIMER_H
 #define TIMER_H
 

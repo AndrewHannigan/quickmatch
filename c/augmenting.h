@@ -86,7 +86,7 @@ int bfs(struct Graph *graph, int *matching, int *bfs_path_length);
 
 int dfs(struct Graph *graph, int *matching);
 
-void traceBackAlternatingPath(int *matching, struct QsNode *start);
+void traceBackAugmentingPath(int *matching, struct QsNode *start);
 
 struct Graph *buildUnmatchedSubgraph(struct Graph *graph, int *matching, int **labelMap, int *steps);
 
@@ -114,6 +114,6 @@ int hopcroft(struct Graph *graph, int **matching);
 
 int hopcroftPartial(struct Graph *graph, int *matching);
 
-int laurens_hopcroft(struct Graph *graph, int **matching);
+int quickmatch_hopcroft(struct Graph *graph, int **matching);
 
 #endif

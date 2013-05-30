@@ -5,8 +5,8 @@
 #include <string.h>
 #include <math.h>
 #include "graph.h"
-#include "alternating.h"
-#include "laurens.h"
+#include "augmenting.h"
+#include "quickmatch.h"
 
 
 /*
@@ -95,7 +95,7 @@ int bfsWave(struct Graph *graph, int level, struct QsNode **targets, struct QsNo
     return -1;
 }
 
-void traceBackAlternatingPath(int *matching, struct QsNode *theStart)
+void traceBackAugmentingPath(int *matching, struct QsNode *theStart)
 /* 
     Flip all the edges on the path, stop when we reach the end of the path
 */
@@ -164,7 +164,7 @@ int bfs(struct Graph *graph, int *matching, int *bfs_path_length)
     }
 
     free(newQueue);
-    traceBackAlternatingPath(matching, visited[targetFound]);
+    traceBackAugmentingPath(matching, visited[targetFound]);
 
     freeQsNodePtrArray(visited, graph->V/2);
     freeQsNodePtrArray(targets, graph->V/2);
@@ -192,7 +192,7 @@ int dfs(struct Graph *graph, int *matching)
         if (targetFound != -1) {break;}
     }
 
-    traceBackAlternatingPath(matching, visited[targetFound]);
+    traceBackAugmentingPath(matching, visited[targetFound]);
 
     freeQsNodePtrArray(visited, graph->V/2);
     freeQsNodePtrArray(targets, graph->V/2);
@@ -303,8 +303,8 @@ int bfs2bfs(struct Graph *graph, int *matching)
         newRightQueue = createQueue();
     }
 
-    traceBackAlternatingPath(matching, leftVisited[targetFound]);
-    traceBackAlternatingPath(matching, rightVisited[targetFound]);
+    traceBackAugmentingPath(matching, leftVisited[targetFound]);
+    traceBackAugmentingPath(matching, rightVisited[targetFound]);
 
     freeQsNodePtrArray(leftVisited, graph->V/2);
     freeQsNodePtrArray(rightVisited, graph->V/2);
@@ -346,8 +346,8 @@ int dfs2bfs(struct Graph *graph, int *matching)
         newQueue = createQueue();
     }
 
-    traceBackAlternatingPath(matching, leftVisited[targetFound]);
-    traceBackAlternatingPath(matching, rightVisited[targetFound]);
+    traceBackAugmentingPath(matching, leftVisited[targetFound]);
+    traceBackAugmentingPath(matching, rightVisited[targetFound]);
 
     freeQsNodePtrArray(leftVisited, graph->V/2);
     freeQsNodePtrArray(rightVisited, graph->V/2);
@@ -383,8 +383,8 @@ int dfs2dfs(struct Graph *graph, int *matching)
         if (targetFound != -1) {break;}
     }
 
-    traceBackAlternatingPath(matching, leftVisited[targetFound]);
-    traceBackAlternatingPath(matching, rightVisited[targetFound]);
+    traceBackAugmentingPath(matching, leftVisited[targetFound]);
+    traceBackAugmentingPath(matching, rightVisited[targetFound]);
 
     freeQsNodePtrArray(leftVisited, graph->V/2);
     freeQsNodePtrArray(rightVisited, graph->V/2);
@@ -552,7 +552,7 @@ void insertToHungarian(struct Graph *hungarianGraph, int srcLabel, int destLabel
 
 int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int level, int *targets, int *visited, struct Queue *oldQueue, struct Queue *newQueue, int *matching, int *steps)
 /*
-    Creates the next level of a hungarian tree.  A hungarian tree contains EVERY and ONLY the shortest length alternating paths in originalGraph.
+    Creates the next level of a hungarian tree.  A hungarian tree contains EVERY and ONLY the shortest length augmenting paths in originalGraph.
 */
 {
 
@@ -578,7 +578,7 @@ int hungarianWave(struct Graph *originalGraph, struct Graph *hungarianGraph, int
             while (crawler != NULL) {
                 (*steps) = (*steps) + 1;
                 if (visited[crawler->label] == 0) {
-                    if (waveResult==2) waveResult = 0; // 2 indicates that there definitely are NO alternating paths left.  0 indicates we just haven't found one yet.
+                    if (waveResult==2) waveResult = 0; // 2 indicates that there definitely are NO augmenting paths left.  0 indicates we just haven't found one yet.
                     // insert into hungarianGraph
                     insertToHungarian(hungarianGraph, cur->label, crawler->label);
                     if (targets[crawler->label] == 1) {
@@ -738,7 +738,7 @@ int hopcroftDFS(struct Graph *hungarianGraph, int *matching, int *steps)
             if (visited[discovered->label] == NULL) {
                 visitNewNodeHopcroftDFS(discovered, cur, visited, stack, steps);
                 if ((matching[discovered->label] == -1) && (discovered->label >= hungarianGraph->V/2)) {
-                    traceBackAlternatingPath(matching, visited[discovered->label]);
+                    traceBackAugmentingPath(matching, visited[discovered->label]);
                     deleteNodeFromNodelist(discovered, cur->label, hungarianGraph);
                     targetFound = true;
                     break;
@@ -858,14 +858,14 @@ int hopcroftPartial(struct Graph *graph, int *matching) {
 
 
 
-int laurens_hopcroft(struct Graph *graph, int **matching)
+int quickmatch_hopcroft(struct Graph *graph, int **matching)
 {
     assert(false);
 //    int unmatched;
 //   
-//    // (1) Run laurens until unmatched subgraph is size N^(2/3)
+//    // (1) Run quickmatch until unmatched subgraph is size N^(2/3)
 //    int stopSize = (int) pow(graph->V/2, 0.6666);
-//    int steps = laurensPartial(graph, matching, &unmatched, stopSize);
+//    int steps = quickmatchPartial(graph, matching, &unmatched, stopSize);
 //
 //    assert(unmatched==stopSize);
 //    completeMatching(matching, graph->V/2);

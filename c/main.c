@@ -8,8 +8,8 @@
 #include <ctype.h>
 #include <unistd.h>
 #include "graph.h"
-#include "laurens.h"
-#include "alternating.h"
+#include "quickmatch.h"
+#include "augmenting.h"
 #include "testing.h"
 
 
@@ -21,12 +21,11 @@ int main ( int argc, char *argv[] )
     char* N = (char*)malloc(max); 
     char* d = (char*)malloc(max); 
 
-    printf("\n1 ---> altTest() - runs QM and tests all alternating-path-based fixup methods (bfs, bfs2bfs, etc.)\n");
-    printf("2 ---> basicQuickMatch()        - runs QM and prints num unmatched\n");
-    printf("3 ---> basicQuickMatchPersist() - runs QM and saves results to disk.  Records unmatched everytime, and right_sides only if we reach a new maxUnmatched.\n");
-    printf("4 ---> basicHopcroft()        - runs hopcroft and prints num unmatched\n");
-    printf("5 ---> hopcroftTest() - runs QM and tests all hermit fixup methods (bfs, bfs2bfs, etc.)\n");
-    printf("6 ---> edgeColoring()\n");
+    printf("\n1 ---> altTest() - runs QM and tests all augmenting-path-based fixup methods (bfs, bfs2bfs, etc.)\n");
+    printf("2 ---> basicQuickmatch()        - runs QM and prints num unmatched\n");
+    printf("3 ---> basicHopcroft()        - runs hopcroft and prints num unmatched\n");
+    printf("4 ---> hopcroftTest() - runs QM and tests all hermit fixup methods (bfs, bfs2bfs, etc.)\n");
+    printf("5 ---> edgeColoring()\n");
 
     getInput("\nSelect a test: ", userInput, max);
     int selection = atoi(userInput);
@@ -40,20 +39,20 @@ int main ( int argc, char *argv[] )
     }    
 
     else if (selection==2) {
-        printf("basicQuickMatch() selected\n");
+        printf("basicQuickmatch() selected\n");
         getInput("N: ", N, max);
         getInput("d: ", d, max);
         getInput("Forever? (y/n) ",userInput,max);
         printf("\n");
         if (userInput[0] == 'y') 
-            basicLaurens(atoi(N),atoi(d),true);
+            basicQuickmatch(atoi(N),atoi(d),true);
         else if (userInput[0] == 'n')
-            basicLaurens(atoi(N),atoi(d),false);
+            basicQuickmatch(atoi(N),atoi(d),false);
         else 
             printf("Didn't recognize input: %c\n\n",userInput[0]);
     }
 
-    else if (selection==4) {
+    else if (selection==3) {
         printf("basicHopcroft() selected\n");
         getInput("N: ", N, max);
         getInput("d: ", d, max);
@@ -67,7 +66,7 @@ int main ( int argc, char *argv[] )
             printf("Didn't recognize input: %c\n\n",userInput[0]);
     }
 
-    else if (selection==5) {
+    else if (selection==4) {
         printf("\nhopcroftTest() selected\n");
         getInput("Filename: ", userInput, max);
         getInput("N: ", N, max);
@@ -75,7 +74,7 @@ int main ( int argc, char *argv[] )
         hopcroftTest(atoi(N),atoi(d),userInput);
     }    
 
-    else if (selection==6) {
+    else if (selection==5) {
         printf("\nedgeColoring() selected\n");
         getInput("N: ", N, max);
         getInput("d: ", d, max);

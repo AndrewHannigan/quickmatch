@@ -17,7 +17,33 @@ QuickMactch: A Heuristic Algorithm for Compute Edge
 1) cd into c/
 2) run "make test"
 3) run "./test.out"
-4) options 2 and 6 are the simplest way to see the QuickMatch algorithm in action
+4) Select either 2 and 5 to see the QuickMatch algorithm in action
+
+
+
+graph.c:	Contains all data-structures and helper methods for graphs.
+
+quickmatch.c:	Implements QuickMatch algorithm
+
+alternating.c:	Implements all six methods of finding augmenting paths
+
+cycles.c:	Implements Euler splits
+
+color.c:	Combines all code to find an edge coloring of a regular bipartite graph 
+
+testing.c:	All testing code
+
+main.c:		UI for running test code	
+
+
+Used to create exacutable tests that are run by bash scripts in the "scripts" directory
+-alttest.c	
+-dtest.c
+-ntest.c
+
+
+
+Python code is for creating plots of data for QuickMatch analysis
 
 
 

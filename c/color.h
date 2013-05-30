@@ -3,9 +3,9 @@
 
 int *convertGraphToMatching(struct Graph *graph);
 
-int **colorGraphLaurens(struct Graph *graph);
+int **colorGraphQuickmatch(struct Graph *graph);
 
-void colorLaurens(struct Graph *graph);
+void colorQuickmatch(struct Graph *graph);
 
 
 #endif
