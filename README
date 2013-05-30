@@ -20,6 +20,7 @@ Getting Started:
 4) Select either 2 and 5 to see the QuickMatch algorithm in action
 
 
+C code contains the primary business logic of the QuickMatch algorithm
 
 graph.c:	Contains all data-structures and helper methods for graphs.
 
@@ -43,7 +44,24 @@ Used to create exacutable tests that are run by bash scripts in the "scripts" di
 
 
 
-Python code is for creating plots of data for QuickMatch analysis
+scripts/ directory generates statistics on QuickMatch trials
+
+ALL.bash: 	Runs all tests.  Requires that "thesis" directory is placed in a parent directory 
+		with a csv directory
+
+stop.bash:	Stops all tests.  This allows tests that are being run in the background from a
+		previous session to still be stopped easily.  Useful when running tests on a remote
+		system.
+
+
+python/ directory contains code for creating plots of data for QuickMatch analysis
+
+plot_tests.py 	Generates all plots used in thesis write up.  CSV_DIR contains the directory of the
+		.csv files.  The default is that csv/ is in the parent directory of thesis/.  This
+		code requires that matplotlib is available to python.  This is dependency is not 
+		satisfied by icecream.
+
+
 
 
 
