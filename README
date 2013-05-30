@@ -13,7 +13,7 @@ QuickMactch: A Heuristic Algorithm for Compute Edge
                          By: Andrew Hannigan '13
 
 
-
+Getting Started:
 1) cd into c/
 2) run "make test"
 3) run "./test.out"
