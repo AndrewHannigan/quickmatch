@@ -7,11 +7,10 @@
  \_____\_____\\______/  |__|  \______||__|\__\ |__|  |__| /__/     \__\  |__|      \______||__|  |__| 
 
 
-QuickMactch: A Heuristic Algorithm for Compute Edge 
+QuickMatch: A Heuristic Algorithm for Compute Edge 
                 Colorings on Regular Bipartite Multigraphs
 
-                         By: Andrew Hannigan '13
-
+                    By: Andrew Hannigan '13
 
 Getting Started:
 1) cd into c/
