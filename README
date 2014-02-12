@@ -6,7 +6,7 @@
  \_____\_____\\______/  |__|  \______||__|\__\ |__|  |__| /__/     \__\  |__|      \______||__|  |__| 
 
 
-QuickMatch: A Heuristic Algorithm for Compute Edge 
+QuickMatch: A Heuristic Algorithm for Computing Edge 
                 Colorings on Regular Bipartite Multigraphs
 
                     By: Andrew Hannigan '13
@@ -15,7 +15,7 @@ Getting Started:
 1) cd into c/
 2) run "make test"
 3) run "./test.out"
-4) Select either 2 and 5 to see the QuickMatch algorithm in action
+4) Select either 2 or 5 to see the QuickMatch algorithm in action
 
 
 C code contains the primary business logic of the QuickMatch algorithm
